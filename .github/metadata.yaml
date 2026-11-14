@@ -1,0 +1,11 @@
+# .github/metadata.yaml
+description: "Sign-in with more than one factor: pending sign-ins, step-up, recovery codes, authenticator apps and passkey challenges, as values and rules."
+topics:
+  - compositions
+  - authentication
+  - identity
+  - two-factor
+  - passkeys
+homepage: "https://swift-institute.org"
+readme:
+  family: E
