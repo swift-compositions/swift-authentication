@@ -12,7 +12,7 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        .library(name: "Authentication", targets: ["Authentication"]),
+        .library(name: "Authentication", targets: ["Authentication"])
     ],
     dependencies: [
         .package(
@@ -60,7 +60,7 @@ let package = Package(
         .testTarget(
             name: "Authentication Tests",
             dependencies: [
-                .target(name: "Authentication"),
+                .target(name: "Authentication")
             ]
         ),
     ],
