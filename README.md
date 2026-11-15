@@ -12,4 +12,5 @@ Use this package on a server that signs people in with more than one factor. It 
 - An authenticator app is RFC 6238 with HMAC-SHA-1, 6 digits, 30-second steps and a 20-byte secret, accepting one step either side. `verify` returns the step it accepted and refuses any step not after the last one accepted, so no code works twice. Its secret has to be readable by the server, so it is stored as it is, not as a digest.
 - `uri(issuer:account:)` writes the `otpauth://totp/` address of Google's Key Uri Format, with the label and issuer percent-encoded as RFC 3986 unreserved characters.
 - A passkey challenge lasts five minutes. Using it only once is the store's job.
+- `Authentication.Passkey.Provider(aaguid:)` names the password manager or platform that made a passkey, from its 16-byte AAGUID, by the community list at github.com/passkeydeveloper/passkey-authenticator-aaguids. It is a choice of names, not part of WebAuthn, so an AAGUID the list leaves out, or the all-zero one an authenticator gives when it does not say, has no provider.
 - The contracts a store must meet will be declared with `@Interface` once swift-interface is in the Institute.

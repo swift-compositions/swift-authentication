@@ -1,4 +1,4 @@
-import Authentication
+@testable import Authentication
 import Testing
 
 @Suite
@@ -172,5 +172,15 @@ struct `Authentication Tests` {
         let app = Authentication.AuthenticatorApp.enroll(using: &generator)
         #expect(app.secret.count == 20)
         #expect(app.base32Secret.count == 32)
+    }
+
+    @Test
+    func `a passkey provider is named from the community list by its AAGUID`() {
+        let iCloud: [UInt8] = [0xdd, 0x4e, 0xc2, 0x89, 0xe0, 0x1d, 0x41, 0xc9, 0xbb, 0x89, 0x70, 0xfa, 0x84, 0x5d, 0x4b, 0xf2]
+        #expect(Authentication.Passkey.Provider(aaguid: iCloud)?.name == "iCloud Keychain")
+        #expect(Authentication.Passkey.Provider(aaguid: Array("ProtonPassProton".utf8))?.name == "Proton Pass")
+        #expect(Authentication.Passkey.Provider.names.count == 22)
+        #expect(Authentication.Passkey.Provider(aaguid: [UInt8](repeating: 0, count: 16)) == nil)
+        #expect(Authentication.Passkey.Provider(aaguid: Array(iCloud.prefix(15))) == nil)
     }
 }
