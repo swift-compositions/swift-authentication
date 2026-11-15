@@ -31,3 +31,16 @@ extension Authentication.Requirement {
         }
     }
 }
+
+extension Authentication.Requirement {
+    public static func after(
+        _ first: Authentication.Factor,
+        holding held: Set<Authentication.Factor>,
+        passkeyOnly: Bool,
+        trusting trusted: Set<Authentication.Factor> = [.passkey]
+    ) -> Self {
+        if passkeyOnly && held.contains(.passkey) { return .passkey }
+        if trusted.contains(first) { return .oneFactor }
+        return held.contains(where: \.isSecond) ? .secondFactor : .oneFactor
+    }
+}

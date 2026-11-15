@@ -184,4 +184,35 @@ struct `Authentication Tests` {
         #expect(Authentication.Passkey.Provider(aaguid: [UInt8](repeating: 0, count: 16)) == nil)
         #expect(Authentication.Passkey.Provider(aaguid: Array(iCloud.prefix(15))) == nil)
     }
+
+    @Test
+    func `what a sign-in needs depends on its first factor, what the account holds and whether it chose passkeys only`() {
+        let held: Set<Authentication.Factor> = [.passkey, .authenticatorApp, .recoveryCode]
+        #expect(Authentication.Requirement.after(.emailCode, holding: held, passkeyOnly: false) == .secondFactor)
+        #expect(Authentication.Requirement.after(.provider, holding: held, passkeyOnly: false) == .secondFactor)
+        #expect(Authentication.Requirement.after(.provider, holding: held, passkeyOnly: false, trusting: [.passkey, .provider]) == .oneFactor)
+        #expect(Authentication.Requirement.after(.provider, holding: held, passkeyOnly: true, trusting: [.passkey, .provider]) == .passkey)
+        #expect(Authentication.Requirement.after(.emailCode, holding: [.authenticatorApp], passkeyOnly: true) == .secondFactor)
+        #expect(Authentication.Requirement.after(.emailCode, holding: [], passkeyOnly: false) == .oneFactor)
+    }
+
+    @Test
+    func `a step-up takes the passkey, else the app, a recovery code always, and passkeys only takes the passkey alone`() {
+        #expect(Authentication.StepUp(holding: [.passkey, .authenticatorApp, .recoveryCode], passkeyOnly: false).ways == [.passkey, .recoveryCode])
+        #expect(Authentication.StepUp(holding: [.authenticatorApp, .recoveryCode], passkeyOnly: false).ways == [.authenticatorApp, .recoveryCode])
+        #expect(Authentication.StepUp(holding: [.recoveryCode], passkeyOnly: false).ways == [.recoveryCode])
+        #expect(Authentication.StepUp(holding: [.passkey, .recoveryCode], passkeyOnly: true).ways == [.passkey])
+        #expect(Authentication.StepUp(holding: [], passkeyOnly: false).ways.isEmpty)
+    }
+
+    @Test
+    func `a step-up is met by one of its ways within the window, or by any fresh sign-in when it has none`() {
+        let app = Authentication.StepUp(holding: [.passkey, .authenticatorApp], passkeyOnly: false)
+        #expect(!app.isMet(by: Authentication.Grant(proofs: [Authentication.Proof(.authenticatorApp, at: Self.at(1000))]), at: Self.at(1100)))
+        #expect(app.isMet(by: Authentication.Grant(proofs: [Authentication.Proof(.passkey, at: Self.at(1000))]), at: Self.at(1300)))
+        #expect(!app.isMet(by: Authentication.Grant(proofs: [Authentication.Proof(.passkey, at: Self.at(1000))]), at: Self.at(1301)))
+        let none = Authentication.StepUp(holding: [], passkeyOnly: false)
+        #expect(none.isMet(by: Authentication.Grant(proofs: [Authentication.Proof(.emailCode, at: Self.at(1000))]), at: Self.at(1200)))
+        #expect(!none.isMet(by: Authentication.Grant(proofs: [Authentication.Proof(.emailCode, at: Self.at(1000))]), at: Self.at(1400)))
+    }
 }
