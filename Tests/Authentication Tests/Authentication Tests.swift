@@ -1,5 +1,6 @@
-@testable import Authentication
 import Testing
+
+@testable import Authentication
 
 @Suite
 struct `Authentication Tests` {
