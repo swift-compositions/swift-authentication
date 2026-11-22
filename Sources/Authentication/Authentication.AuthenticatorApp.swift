@@ -14,12 +14,12 @@ extension Authentication {
         /// The shared secret.
         public let secret: [UInt8]
 
-        let totp: RFC_6238.TOTP
+        let totp: IETF.RFC.`6238`.TOTP
 
         /// An enrolment read back from storage.
-        public init(secret: [UInt8]) throws(RFC_6238.Error) {
+        public init(secret: [UInt8]) throws(IETF.RFC.`6238`.Error) {
             self.secret = secret
-            self.totp = try RFC_6238.TOTP(secret: secret)
+            self.totp = try IETF.RFC.`6238`.TOTP(secret: secret)
         }
 
         /// A new enrolment with a 20-byte secret from `generator`.
@@ -41,7 +41,7 @@ extension Authentication.AuthenticatorApp {
 
     /// The secret in Base32 without padding, for typing into an app by hand.
     public var base32Secret: String {
-        let letters = RFC_4648.Base32.encode(secret.map(Byte.init(_:)), padding: false)
+        let letters = IETF.RFC.`4648`.Base32.encode(secret.map(Byte.init(_:)), padding: false)
         return String(decoding: letters.map(\.underlying), as: UTF8.self)
     }
 
@@ -49,7 +49,7 @@ extension Authentication.AuthenticatorApp {
     /// and the account, each percent-encoded.
     public func uri(issuer: String, account: String) -> String {
         func encoded(_ text: String) -> String {
-            String(decoding: RFC_3986.percentEncode(Array(text.utf8)), as: UTF8.self)
+            String(decoding: IETF.RFC.`3986`.percentEncode(Array(text.utf8)), as: UTF8.self)
         }
         return "otpauth://totp/\(encoded(issuer)):\(encoded(account))"
             + "?secret=\(base32Secret)&issuer=\(encoded(issuer))&algorithm=SHA1&digits=6&period=30"

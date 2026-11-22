@@ -27,7 +27,7 @@ extension Authentication {
         /// The token a client sent back, as its base64url text without padding; `nil` unless it is 32 bytes.
         public init?(encoded: String) {
             guard !encoded.contains("="),
-                let decoded = RFC_4648.Base64.URL.decode(encoded, strictness: .strict),
+                let decoded = IETF.RFC.`4648`.Base64.URL.decode(encoded, strictness: .strict),
                 decoded.count == 32
             else { return nil }
             self.bytes = decoded.map(\.underlying)
@@ -35,7 +35,7 @@ extension Authentication {
 
         /// Base64url without padding: 43 characters, safe in a cookie, a URL or a form.
         public var encoded: String {
-            let codes = RFC_4648.Base64.URL.encode(bytes.map(Byte.init(_:)), padding: false)
+            let codes = IETF.RFC.`4648`.Base64.URL.encode(bytes.map(Byte.init(_:)), padding: false)
             return String(decoding: codes.map(\.underlying), as: UTF8.self)
         }
 

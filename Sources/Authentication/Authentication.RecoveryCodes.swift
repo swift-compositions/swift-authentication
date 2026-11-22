@@ -31,7 +31,7 @@ extension Authentication {
                 for _ in 0..<10 {
                     bytes.append(UInt8.random(in: 0...255, using: &generator))
                 }
-                let letters = RFC_4648.Base32.encode(bytes.map(Byte.init(_:)), padding: false)
+                let letters = IETF.RFC.`4648`.Base32.encode(bytes.map(Byte.init(_:)), padding: false)
                 let text = String(decoding: letters.map(\.underlying), as: UTF8.self).lowercased()
                 let groups = stride(from: 0, to: 16, by: 4).map { start in
                     String(text.dropFirst(start).prefix(4))

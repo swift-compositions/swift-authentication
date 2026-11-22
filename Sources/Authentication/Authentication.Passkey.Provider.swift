@@ -37,7 +37,7 @@ extension Authentication.Passkey.Provider {
             ("9ddd1817af5a4672a2b93e3dd95000a9", "Windows Hello"),
             ("6028b017b1d44c02b4b3afcdafc96bb2", "Windows Hello"),
         ].compactMap { hex, name in
-            RFC_4648.Base16.decode(hex, skipPrefix: false).map { ($0.map(\.underlying), name) }
+            IETF.RFC.`4648`.Base16.decode(hex, skipPrefix: false).map { ($0.map(\.underlying), name) }
         }
     )
 }
