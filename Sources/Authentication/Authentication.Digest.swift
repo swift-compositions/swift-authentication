@@ -11,7 +11,7 @@ extension Authentication {
 
         /// The digest of `secret`.
         public init(of secret: [UInt8]) {
-            self.bytes = FIPS_180_4.SHA256.digest(secret.map(Byte.init(_:))).bytes.map(\.underlying)
+            self.bytes = NIST.FIPS.`180`.`4`.SHA256.digest(secret.map(Byte.init(_:))).bytes.map(\.underlying)
         }
 
         /// A digest read back from storage: exactly 32 bytes.
